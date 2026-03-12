@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageText = `🎉 Нова заявка з сайту!\n\n👤 Ім'я: ${clientName}\n📞 Телефон: ${clientPhone}\n💅 Процедура: ${clientProcedure}\n📅 Дата: ${clientDate}\n⏰ Час: ${clientTimePeriod}`;
 
             const botToken = '8204168253:AAEqJZY32L1LuugQT_OGUYRx2gENpg5mS0o';
-            const chatId = '260464270';
+            const chatId = '950363883';
             const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
             const originalBtnText = submitBtn.innerText;
