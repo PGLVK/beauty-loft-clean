@@ -127,40 +127,71 @@
 <section id="blog" class="section bg-gray">
     <div class="container">
         <h2 class="section-title">Блог експерта</h2>
-        <div class="blog-grid">
-            <article class="blog-card">
-                <div class="blog-image"><img src="img/gel-polish-lamp.jpg" alt="Лампа для манікюру"></div>
-                <div class="blog-content">
-                    <span class="blog-date">12.02.2026</span>
-                    <h3 class="blog-title">Чому пече гель-лак?</h3>
-                    <p class="blog-excerpt">Міфи про полімеризацію та як уникнути дискомфорту.</p>
-                    <a href="article-1.html" class="read-more">Читати далі →</a>
-                </div>
-            </article>
-
-            <article class="blog-card">
-                <div class="blog-image"><img src="img/pedicure-medical-care.jpg" alt="Догляд за стопами"></div>
-                <div class="blog-content">
-                    <span class="blog-date">10.02.2026</span>
-                    <h3 class="blog-title">Догляд за стопами</h3>
-                    <p class="blog-excerpt">Топ помилок взимку, які призводять до тріщин.</p>
-                    <a href="article-2.html" class="read-more">Читати далі →</a>
-                </div>
-            </article>
-
-            <article class="blog-card">
-                <div class="blog-image"><img src="img/sterilization-process-loft.jpg" alt="Стерилізація"></div>
-                <div class="blog-content">
-                    <span class="blog-date">01.02.2026</span>
-                    <h3 class="blog-title">Про стерилізацію</h3>
-                    <p class="blog-excerpt">Як ми гарантуємо 100% безпеку кожного інструмента.</p>
-                    <a href="article-3.html" class="read-more">Читати далі →</a>
-                </div>
-            </article>
+        <div id="blog-container" class="blog-grid">
+            <p id="blog-loader">Завантаження цікавих статей...</p>
         </div>
     </div>
 </section>
 
+<script>
+async function loadBlogPosts() {
+    const container = document.getElementById('blog-container');
+    const loader = document.getElementById('blog-loader');
+    
+    // ПРИМІТКА: Заміни 'ВАШ_ЛОГІН' на свій нікнейм GitHub нижче
+    const repoOwner = 'ВАШ_ЛОГІН'; 
+    const repoName = 'beauty-loft-clean';
+    const folderPath = 'blog';
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
+        const files = await response.json();
+        
+        // Видаляємо напис про завантаження
+        if (loader) loader.remove();
+
+        // Фільтруємо тільки JSON файли, які створила адмінка
+        const jsonFiles = files.filter(file => file.name.endsWith('.json') && file.name !== 'booked-dates.json');
+
+        if (jsonFiles.length === 0) {
+            container.innerHTML = '<p>Поки що немає нових статей.</p>';
+            return;
+        }
+
+        // Сортуємо файли, щоб нові були зверху
+        jsonFiles.reverse();
+
+        for (const file of jsonFiles) {
+            const postResponse = await fetch(file.download_url);
+            const post = await postResponse.json();
+
+            // Форматуємо дату
+            const postDate = new Date(post.date).toLocaleDateString('uk-UA');
+
+            // Створюємо картку статті (точно як у твоєму дизайні)
+            const articleHtml = `
+                <article class="blog-card">
+                    <div class="blog-image"><img src="${post.image}" alt="${post.title}"></div>
+                    <div class="blog-content">
+                        <span class="blog-date">${postDate}</span>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p class="blog-excerpt">${post.description}</p>
+                        <a href="post.html?id=${file.name}" class="read-more">Читати далі →</a>
+                    </div>
+                </article>
+            `;
+            container.insertAdjacentHTML('beforeend', articleHtml);
+        }
+    } catch (error) {
+        console.error('Помилка завантаження блогу:', error);
+        if (loader) loader.innerHTML = 'Не вдалося завантажити статті.';
+    }
+}
+
+// Запускаємо функцію
+loadBlogPosts();
+</script>
+    
     <section id="shop" class="shop-section">
         <div class="container">
             <h2 class="section-title">Професійний догляд: наш вибір</h2>
