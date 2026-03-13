@@ -9,6 +9,8 @@ collections:
   - name: "blog"
     label: "Статті Блогу"
     folder: "blog"
+    extension: json
+    format: json
     create: true
     slug: "article-{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
