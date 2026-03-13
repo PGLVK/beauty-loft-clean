@@ -17,6 +17,25 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+  /* Це змусить фото в блозі бути ідеальними */
+  .blog-image img {
+    width: 100% !important;
+    height: 250px !important;
+    object-fit: cover !important;
+    border-radius: 12px 12px 0 0;
+  }
+  .blog-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    background: #fff;
+    transition: transform 0.3s ease;
+  }
+  .blog-card:hover {
+    transform: translateY(-5px);
+  }
+</style>
 </head>
 <body>
 
