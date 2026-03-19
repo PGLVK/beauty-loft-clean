@@ -4,49 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Стаття | The Beauty Loft</title>
-    <link rel="stylesheet" href="css/style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
-        .post-container { max-width: 800px; margin: 100px auto; padding: 20px; }
-        .post-header img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
-        .post-body { line-height: 1.8; font-size: 1.1rem; }
+        body { font-family: 'Montserrat', sans-serif; line-height: 1.8; color: #333; margin: 0; background: #fff; }
+        .article-wrap { max-width: 850px; margin: 0 auto; padding: 60px 20px; }
+        .back-link { display: inline-block; margin-bottom: 40px; text-decoration: none; color: #c4a484; font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+        .article-header img { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 40px; }
+        .article-date { color: #c4a484; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 700; }
+        .article-title { font-family: 'Playfair Display', serif; font-size: 48px; line-height: 1.1; margin: 20px 0 40px; color: #1a1a1a; }
+        .article-body { font-size: 18px; color: #444; }
+        .article-body h3 { font-family: 'Playfair Display', serif; font-size: 32px; margin-top: 50px; color: #1a1a1a; }
+        .article-body p { margin-bottom: 25px; }
+        .cta-box { margin-top: 60px; padding: 40px; background: #f9f9f9; border-radius: 12px; text-align: center; }
+        .btn-book { background: #1a1a1a; color: #fff; padding: 18px 40px; text-decoration: none; display: inline-block; font-weight: 700; text-transform: uppercase; border-radius: 4px; letter-spacing: 1px; }
+        @media (max-width: 768px) { 
+            .article-title { font-size: 32px; }
+            .article-header img { height: 300px; }
+        }
     </style>
 </head>
 <body>
-    <div class="post-container" id="post-content">
-        <p>Завантаження статті...</p>
+    <div class="article-wrap" id="post-content">
+        <p>Завантажуємо атмосферу...</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        async function loadSinglePost() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
+        async function loadPost() {
+            const id = new URLSearchParams(window.location.search).get('id');
             const container = document.getElementById('post-content');
 
-            // ПРИМІТКА: Заміни 'ВАШ_ЛОГІН' на свій нікнейм GitHub
-            const repoOwner = 'PGLVK';
-            const repoName = 'beauty-loft-clean';
-
             try {
-                const response = await fetch(`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/blog/${postId}`);
-                const post = await response.json();
-
+                const res = await fetch(`https://raw.githubusercontent.com/PGLVK/beauty-loft-clean/main/blog/${id}`);
+                const p = await res.json();
+                
                 container.innerHTML = `
-                    <div class="post-header">
-                        <img src="${post.image}" alt="${post.title}">
-                        <span class="blog-date">${new Date(post.date).toLocaleDateString('uk-UA')}</span>
-                        <h1>${post.title}</h1>
+                    <a href="index.html#blog" class="back-link">← назад до блогу</a>
+                    <div class="article-header">
+                        <img src="${p.image}" alt="${p.title}">
+                        <div class="article-date">${new Date(p.date).toLocaleDateString('uk-UA')}</div>
+                        <h1 class="article-title">${p.title}</h1>
                     </div>
-                    <div class="post-body">
-                        ${marked.parse(post.body)}
+                    <div class="article-body">${marked.parse(p.body)}</div>
+                    <div class="cta-box">
+                        <h3 style="margin-top:0">Ваші стопи чекають на це</h3>
+                        <p>Запишіться на професійне відновлення в The Beauty Loft вже сьогодні.</p>
+                        <a href="index.html#booking-form" class="btn-book">Записатись на візит</a>
                     </div>
-                    <br><a href="index.html" class="read-more">← Назад до блогу</a>
                 `;
+                document.title = p.title;
             } catch (e) {
-                container.innerHTML = 'Статтю не знайдено.';
+                container.innerHTML = '<h2>Статтю не знайдено</h2>';
             }
         }
-        loadSinglePost();
+        loadPost();
     </script>
 </body>
 </html>
