@@ -18,71 +18,83 @@
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
-  /* Bit.ua Style - Безпечно для існуючого сайту */
+  /* ПОВНІСТЮ ІЗОЛЬОВАНІ СТИЛИ - BIT.UA STYLE */
   #blog-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 40px;
-    padding: 30px 0;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 40px !important;
+    padding: 40px 0 !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
   }
-  .blog-card {
-    display: flex;
-    flex-direction: column;
-    text-align: left; /* Журнальне вирівнювання по лівому краю */
-    transition: 0.3s;
+  .bl-card-new {
+    display: flex !important;
+    flex-direction: column !important;
+    background: #fff !important;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    transition: 0.3s !important;
+    height: 100% !important;
+    text-align: left !important;
   }
-  .blog-image {
-    width: 100%;
-    aspect-ratio: 16 / 10; /* Ідеальний журнальний формат фото */
-    overflow: hidden;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    background: #f0f0f0;
+  .bl-card-new:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.07); }
+  
+  .bl-img-wrap {
+    width: 100% !important;
+    height: 220px !important;
+    overflow: hidden !important;
+    background: #f8f8f8 !important;
   }
-  .blog-image img {
+  .bl-img-wrap img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
   }
-  .blog-date {
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #c4a484; /* Твій фірмовий колір */
-    margin-bottom: 10px;
-    font-weight: 700;
+  .bl-content-new {
+    padding: 25px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
   }
-  .blog-title {
-    font-size: 22px;
-    line-height: 1.2;
-    margin-bottom: 15px;
-    color: #1a1a1a;
-    font-weight: 700;
+  .bl-date-new {
+    color: #c4a484 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px !important;
+    display: block !important;
   }
-  .blog-excerpt {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #666;
-    margin-bottom: 20px;
-    /* Обрізаємо опис на 3 рядки, щоб нічого не наповзало */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .bl-title-new {
+    font-size: 20px !important;
+    color: #1a1a1a !important;
+    margin: 0 0 15px 0 !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
   }
-  .read-more {
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 13px;
-    letter-spacing: 1px;
-    color: #1a1a1a;
-    text-decoration: none;
-    border-bottom: 2px solid #c4a484;
-    align-self: flex-start;
-    padding-bottom: 4px;
-    transition: 0.3s;
+  .bl-excerpt-new {
+    font-size: 15px !important;
+    color: #666 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 25px !important;
+    flex-grow: 1 !important;
+    /* Обрізка тексту */
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
   }
-  .read-more:hover { border-bottom-color: #1a1a1a; }
+  .bl-btn-new {
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 13px !important;
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+    border-bottom: 2px solid #c4a484 !important;
+    align-self: flex-start !important;
+    padding-bottom: 4px !important;
+  }
 </style>
 </head>
 <body>
@@ -203,42 +215,41 @@
 <script>
 async function loadBlogPosts() {
     const container = document.getElementById('blog-container');
-    const loader = document.getElementById('blog-loader');
     const repoOwner = 'PGLVK'; 
     const repoName = 'beauty-loft-clean';
 
     try {
         const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/blog`);
         const files = await response.json();
-        if (loader) loader.remove();
+        container.innerHTML = ''; 
 
         const jsonFiles = files.filter(f => f.name.endsWith('.json') && f.name !== 'booked-dates.json').reverse();
-
-        if (jsonFiles.length === 0) {
-            container.innerHTML = '<p>Поки що немає нових статей.</p>';
-            return;
-        }
 
         for (const file of jsonFiles) {
             const postRes = await fetch(file.download_url);
             const post = await postRes.json();
             const postDate = new Date(post.date).toLocaleDateString('uk-UA');
             
-            // Якщо фото немає, використовуємо гарну заглушку
-            const img = post.image || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500';
+            // Запасне фото, якщо в адмінці щось пішло не так
+            const defaultImg = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1000&auto=format&fit=crop';
+            const imgSrc = post.image ? post.image : defaultImg;
 
             container.insertAdjacentHTML('beforeend', `
-                <article class="blog-card">
-                    <div class="blog-image"><img src="${img}" alt="${post.title}"></div>
-                    <span class="blog-date">${postDate}</span>
-                    <h3 class="blog-title">${post.title}</h3>
-                    <p class="blog-excerpt">${post.description}</p>
-                    <a href="post.html?id=${file.name}" class="read-more">Читати статтю →</a>
+                <article class="bl-card-new">
+                    <div class="bl-img-wrap">
+                        <img src="${imgSrc}" alt="${post.title}" onerror="this.src='${defaultImg}';">
+                    </div>
+                    <div class="bl-content-new">
+                        <span class="bl-date-new">${postDate}</span>
+                        <h3 class="bl-title-new">${post.title}</h3>
+                        <p class="bl-excerpt-new">${post.description}</p>
+                        <a href="post.html?id=${file.name}" class="bl-btn-new">Читати статтю →</a>
+                    </div>
                 </article>
             `);
         }
     } catch (e) {
-        if (loader) loader.innerHTML = 'Оновлюємо статті...';
+        console.error("Помилка блогу:", e);
     }
 }
 loadBlogPosts();
