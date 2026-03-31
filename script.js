@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('booked-dates.json');
             if (response.ok) {
                 const data = await response.json();
-                disabledDates = data.dates || [];
+                // ОСЬ ТУТ МАГІЯ: Перетворюємо текстові дати на об'єкти Date
+                disabledDates = (data.dates || []).map(dateString => new Date(dateString));
             }
         } catch (error) {
             console.log('Дати ще не налаштовані в адмінці або файл порожній');
